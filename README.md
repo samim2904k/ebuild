@@ -42,7 +42,7 @@ eBuild is a full-stack, no-code platform built using **Django**, **React**, and 
 
 | Email Builder |
 |-------------------|
-| ![Chat](./screenshots/emailbuild.png) |
+| ![Chat](./screenshots/emailbuilder.png) |
 
 ---
 
