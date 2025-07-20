@@ -114,3 +114,6 @@ ebuild/
 
 ---
 
+
+<p align="center"><i>Made with ❤️ by samim khan</i></p>
+
