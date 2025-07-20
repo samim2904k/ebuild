@@ -1,0 +1,689 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="zxx" class="js">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="author" content="User" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description"
+        content="Workspace to manage content" />
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" />
+    <title>File Manager</title>
+    <link rel="stylesheet" href="{% static 'css/dashlite.css' %}" />
+    <link id="skin-default" rel="stylesheet" href="{% static 'css/theme.css@ver=3.2.4.css' %}" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-91615293-4"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag("js", new Date());
+        gtag("config", "UA-91615293-4");
+    </script>
+    <style>
+        
+/* Loader Animation */
+
+.loader-wrapper {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Transparent dark background */
+  z-index: 9999;
+}
+
+
+.loader {
+  position: absolute;
+  top: 40%;
+  left: 40%;
+  margin-left: 10%;
+  width: 50px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 8px solid;
+  border-color: #000 #0000;
+  animation: l1 1s infinite;
+}
+@keyframes l1 {to{transform: rotate(.5turn)}}
+
+    </style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+<style>
+    .toast-error {
+        background-color: #5f231d !important;
+        color: white !important;
+    }
+
+    .toast-success {
+        background-color: #2f8b57 !important;
+        color: white !important;
+    }
+
+  </style>
+
+</head>
+
+<body class="nk-body npc-apps apps-only has-apps-sidebar npc-apps-files">
+    <div class="nk-app-root">
+
+        <div class="nk-main">
+            <div class="nk-wrap">
+                <div class="nk-header nk-header-fixed is-light">
+                    <div class="container-fluid">
+                        <div class="nk-header-wrap">
+                            <div class="nk-menu-trigger d-xl-none ms-n1">
+                                <a href="#" class="btn btn-trigger btn-icon toggle"
+                                    data-target="files-aside"><em class="icon ni ni-menu-alt-r"></em></a>
+                            </div>
+                            <div class="nk-header-app-name">
+                                <div class="nk-header-app-logo">
+                                    <img class="logo-dark logo-img" src="{% static 'images/logo-dark-small.png' %}"
+                                        srcset="{% static 'images/logo-dark-small2x.png' %} 2x" alt="logo-dark">
+                                </div>
+                                <div class="nk-header-app-info">
+                                    <span class="lead-text">EBUILD</span>
+                                </div>
+                            </div>
+                            <div class="nk-header-tools">
+                                <ul class="nk-quick-nav">
+
+                                    <li class="dropdown user-dropdown">
+                                        <a href="#" class="dropdown-toggle me-n1" data-bs-toggle="dropdown">
+                                            <div class="user-toggle">
+                                                <div class="user-avatar sm">
+                                                    <em class="icon ni ni-user-alt"></em>
+                                                </div>
+                                            </div>
+                                            <div class="nk-header-app-info ml-5">
+                                                <span class="lead-text">{{user.username}}</span><span class="sub-text">Nexheven Pvt Ltd</span>
+                                            </div>
+                                        </a>
+
+                                        <div class="dropdown-menu dropdown-menu-md dropdown-menu-end">
+                                            <div class="dropdown-inner user-card-wrap bg-lighter d-none d-md-block">
+                                                <div class="user-card">
+                                                    <div class="user-avatar"><span>{{ user.username|slice:":2"|upper }}</span></div>
+                                                    <div class="user-info">
+                                                        <span class="lead-text">{{user.username}}</span><span
+                                                            class="sub-text">{{ user.email }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="dropdown-inner">
+                                                <ul class="link-list">
+                                                    <li>
+                                                        <a href="#" onclick="confirmLogout(event)"><em
+                                                                class="icon ni ni-signout"></em><span>Sign
+                                                                out</span></a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nk-sidebar" data-content="sidebarMenu">
+
+                </div>
+                <div class="nk-content p-0">
+                    <div class="nk-content-inner">
+                        <div class="nk-content-body">
+                            <div class="nk-fmg">
+                                <div class="nk-fmg-aside" data-content="files-aside" data-toggle-overlay="true"
+                                    data-toggle-body="true" data-toggle-screen="lg" data-simplebar>
+                                    <div class="nk-fmg-aside-wrap">
+                                        <div class="nk-fmg-aside-top">
+                                            <ul class="nk-fmg-menu">
+
+                                                <li class="active">
+                                                    <a class="nk-fmg-menu-item" href=""><em
+                                                            class="icon ni ni-folder"></em><span
+                                                            class="nk-fmg-menu-text">File Manager</span></a>
+                                                </li>
+                                                <li>
+                                                    <a class="nk-fmg-menu-item" href="/templateList"><em
+                                                            class="icon ni ni-activity"></em><span
+                                                            class="nk-fmg-menu-text">Templates</span></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="nk-fmg-body">
+                                    <div class="nk-fmg-body-head d-none d-lg-flex">
+                                        <div class="nk-fmg-search">
+                                            <em class="icon ni ni-search"></em><input type="text"
+                                                id="searchInput"
+                                                class="form-control border-transparent form-focus-none"
+                                                placeholder="Search files, folders"
+                                                oninput="searchFilesAndFolders()" />
+                                        </div>
+                                        <div class="nk-fmg-actions">
+                                            <ul class="nk-block-tools g-3">
+                                                <li>
+                                                    <div class="dropdown">
+                                                        <a href="#" class="btn btn-primary"
+                                                            data-bs-toggle="dropdown"><em class="icon ni ni-plus"></em>
+                                                            <span>Create</span></a>
+                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                            <ul class="link-list-opt no-bdr">
+
+                                                                <li>
+                                                                    <a href="#new-template" data-bs-toggle="modal"><em
+                                                                            class="icon ni ni-file-plus"></em><span>Create
+                                                                            Template</span></a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="#new-folder" data-bs-toggle="modal"><em
+                                                                            class="icon ni ni-folder-plus"></em><span>Create
+                                                                            Folder</span></a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="nk-fmg-body-content">
+                                        <div class="nk-block-head nk-block-head-sm">
+                                            <div class="nk-block-between position-relative">
+                                                <div class="nk-block-head-content">
+                                                    <h3 class="nk-block-title page-title">File Manager</h3>
+                                                </div>
+                                                <div class="nk-block-head-content">
+                                                    <ul class="nk-block-tools g-1">
+                                                        <li class="d-lg-none">
+                                                            <a href="#"
+                                                                class="btn btn-trigger btn-icon search-toggle toggle-search"
+                                                                data-target="search"><em
+                                                                    class="icon ni ni-search"></em></a>
+                                                        </li>
+                                                        <li class="d-lg-none">
+                                                            <div class="dropdown">
+                                                                <a href="#" class="btn btn-trigger btn-icon"
+                                                                    data-bs-toggle="dropdown"><em
+                                                                        class="icon ni ni-view-grid3-wd"></em></a>
+                                                                <div class="dropdown-menu dropdown-menu-end">
+                                                                    <ul class="link-list-opt no-bdr">
+                                                                        <li>
+                                                                            <a href="files.html"><em
+                                                                                    class="icon ni ni-view-grid3-wd"></em><span>Grid
+                                                                                    View</span></a>
+                                                                        </li>
+                                                                        <li>
+                                                                            <a href="files-group-view.html"><em
+                                                                                    class="icon ni ni-view-group-wd"></em><span>Group
+                                                                                    View</span></a>
+                                                                        </li>
+                                                                        <li>
+                                                                            <a href="files-list-view.html"><em
+                                                                                    class="icon ni ni-view-row-wd"></em><span>List
+                                                                                    View</span></a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="d-lg-none">
+                                                            <div class="dropdown">
+                                                                <a href="#" class="btn btn-trigger btn-icon"
+                                                                    data-bs-toggle="dropdown"><em
+                                                                        class="icon ni ni-plus"></em></a>
+                                                                <div class="dropdown-menu dropdown-menu-end">
+                                                                    <ul class="link-list-opt no-bdr">
+                                                                        <li>
+                                                                            <a href="#file-upload"
+                                                                                data-bs-toggle="modal"><em
+                                                                                    class="icon ni ni-upload-cloud"></em><span>Upload
+                                                                                    File</span></a>
+                                                                        </li>
+                                                                        <li>
+                                                                            <a href="#"><em
+                                                                                    class="icon ni ni-file-plus"></em><span>Create
+                                                                                    File</span></a>
+                                                                        </li>
+                                                                        <li>
+                                                                            <a href="#"><em
+                                                                                    class="icon ni ni-folder-plus"></em><span>Create
+                                                                                    Folder</span></a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+
+                                                    </ul>
+                                                </div>
+                                                <div class="search-wrap px-2 d-lg-none" data-search="search">
+                                                    <div class="search-content">
+                                                        <a href="#"
+                                                            class="search-back btn btn-icon toggle-search"
+                                                            data-target="search"><em
+                                                                class="icon ni ni-arrow-left"></em></a><input
+                                                            type="text"
+                                                            class="form-control border-transparent form-focus-none"
+                                                            placeholder="Search files, folders" /><button
+                                                            class="search-submit btn btn-icon">
+                                                            <em class="icon ni ni-search"></em>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="nk-block-head-content d-none d-lg-block">
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="nk-fmg-listing nk-block">
+                                            <div class="nk-files nk-files-view-grid">
+                                                <div class="nk-files-head">
+                                                    <div class="nk-file-item">
+                                                        <div class="nk-file-info">
+                                                            <div class="dropdown">
+                                                                
+                                                                <div class="dropdown-menu dropdown-menu-xs">
+                                                                    <ul class="link-list-opt no-bdr">
+                                                                        <li>
+                                                                            <a class="active"
+                                                                                href="#"><span>Last
+                                                                                    Opened</span></a>
+                                                                        </li>
+                                                                        <li>
+                                                                            <a href="#"><span>Name</span></a>
+                                                                        </li>
+                                                                        <li>
+                                                                            <a href="#"><span>Size</span></a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="nk-files-list">
+                                                    {% for folder in folders %}
+                                                    <div class="nk-file-item nk-file"
+                                                        
+                                                        ondragover="allowDrop(event)"
+                                                        ondrop="drop(event, '{{ folder.id }}')"
+                                                        style="cursor: pointer;">
+                                                        <div class="nk-file-info"
+                                                        onclick="openFolder('{{ folder.id }}')"
+                                                        >
+                                                            <div class="nk-file-title">
+                                                                <div class="nk-file-icon">
+                                                                    <a class="nk-file-icon-link" href="#"><span class="nk-file-icon-type">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 72 72">
+                                                                            <path fill="#6C87FE" d="M57.5,31h-23c-1.4,0-2.5-1.1-2.5-2.5v-10c0-1.4,1.1-2.5,2.5-2.5h23c1.4,0,2.5,1.1,2.5,2.5v10	C60,29.9,58.9,31,57.5,31z" />
+                                                                            <path fill="#8AA3FF" d="M59.8,61H12.2C8.8,61,6,58,6,54.4V17.6C6,14,8.8,11,12.2,11h18.5c1.7,0,3.3,1,4.1,2.6L38,24h21.8c3.4,0,6.2,2.4,6.2,6v24.4C66,58,63.2,61,59.8,61z" />
+                                                                        </svg>
+                                                                    </span></a>
+                                                                </div>
+                                                                <div class="nk-file-name">
+                                                                    <div class="nk-file-name-text">
+                                                                        <a href="#" class="title">{{ folder.name }}</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <ul class="nk-file-desc">
+                                                                <li class="date">{{ folder.created_at }}</li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="nk-file-actions">
+                                                            <div class="dropdown">
+                                                                <a href="files.html"
+                                                                    class="dropdown-toggle btn btn-sm btn-icon btn-trigger"
+                                                                    data-bs-toggle="dropdown"><em
+                                                                        class="icon ni ni-more-h"></em></a>
+                                                                <div class="dropdown-menu dropdown-menu-end">
+                                                                    <ul class="link-list-plain no-bdr">
+                                                                        <li>
+                                                                            <a href="#file-rename"
+                                                                            data-bs-toggle="modal"
+                                                                            onclick="openRenameModal('{{ folder.id }}', 'folder', '{{ folder.name }}')"><em
+                                                                                    class="icon ni ni-pen"></em><span>Rename</span></a>
+                                                                        </li>
+                                                                        <li>
+                                                                            <a onclick="deleteFolder({{ folder.id }})"><em
+                                                                                    class="icon ni ni-trash"></em><span>Delete</span></a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                    {% for file in files %}
+                                                    <div class="nk-file-item nk-file" 
+                                                    draggable="true"
+                                                    ondragstart="drag(event)"
+                                                        data-file-id="{{ file.id }}">
+                                                        <div class="nk-file-info"
+                                                        >
+                                                            <div class="nk-file-title">
+                                                                <div class="nk-file-icon">
+                                                                    <a class="nk-file-icon-link"><span class="nk-file-icon-type">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72">
+                                                                            <path d="M50,61H22a6,6,0,0,1-6-6V22l9-11H50a6,6,0,0,1,6,6V55A6,6,0,0,1,50,61Z" style="fill:#7e95c4"></path>
+                                                                            <rect x="27" y="31" width="18" height="2" rx="1" ry="1" style="fill:#fff"></rect>
+                                                                        </svg>
+                                                                    </span></a>
+                                                                </div>
+                                                                <div class="nk-file-name">
+                                                                    <div class="nk-file-name-text">
+                                                                        <a href="/edit-email/{{ file.id }}" class="title">{{ file.name }}</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <ul class="nk-file-desc">
+                                                                <li class="date">{{ file.uploaded_at }}</li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="nk-file-actions">
+                                                            <div class="dropdown"><a href=""
+                                                                    class="dropdown-toggle btn btn-sm btn-icon btn-trigger"
+                                                                    data-bs-toggle="dropdown" aria-expanded="false"><em
+                                                                        class="icon ni ni-more-h"></em></a>
+                                                                <div class="dropdown-menu dropdown-menu-end" >
+                                                                    <ul class="link-list-plain no-bdr">
+                                                                        <li><a href="/edit-email/{{ file.id }}"
+                                                                                data-bs-toggle="modal"><em
+                                                                                    class="icon ni ni-eye"></em><span>Open</span></a>
+                                                                        </li>
+                                                                        
+                                                                        <li><a href="#file-rename"
+                                                                            data-bs-toggle="modal"
+                                                                            onclick="openRenameModal('{{ file.id }}', 'file', '{{ file.name }}')"><em
+                                                                                    class="icon ni ni-pen"></em><span>Rename</span></a>
+                                                                        </li>
+                                                                        <li><a onclick="deleteTemplate({{ file.id }})"><em
+                                                                                    class="icon ni ni-trash"></em><span>Delete</span></a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="file-rename">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <input type="hidden" id="rename-item-id">
+                <input type="hidden" id="rename-item-type">
+                <div class="modal-header align-center">
+                    <div class="nk-file-title">
+                        <div class="nk-file-icon">
+                            <span class="nk-file-icon-type"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                                    viewBox="0 0 72 72">
+                                    <path fill="#6C87FE"
+                                        d="M57.5,31h-23c-1.4,0-2.5-1.1-2.5-2.5v-10c0-1.4,1.1-2.5,2.5-2.5h23c1.4,0,2.5,1.1,2.5,2.5v10	C60,29.9,58.9,31,57.5,31z" />
+                                    <path fill="#8AA3FF"
+                                        d="M59.8,61H12.2C8.8,61,6,58,6,54.4V17.6C6,14,8.8,11,12.2,11h18.5c1.7,0,3.3,1,4.1,2.6L38,24h21.8	c3.4,0,6.2,2.4,6.2,6v24.4C66,58,63.2,61,59.8,61z" />
+                                    <path display="none" fill="#8AA3FF"
+                                        d="M62.1,61H9.9C7.8,61,6,59.2,6,57c0,0,0-31.5,0-42c0-2.2,1.8-4,3.9-4h19.3	c1.6,0,3.2,0.2,3.9,2.3l2.7,6.8c0.5,1.1,1.6,1.9,2.8,1.9h23.5c2.2,0,3.9,1.8,3.9,4v31C66,59.2,64.2,61,62.1,61z" />
+                                    <path fill="#798BFF" d="M7.7,59c2.2,2.4,4.7,2,6.3,2h45c1.1,0,3.2,0.1,5.3-2H7.7z" />
+                                </svg></span>
+                        </div>
+                        <div class="nk-file-name">
+                            <div class="nk-file-name-text">
+                                <span class="title" id="oldName">UI/UX Design</span>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" class="close" data-bs-dismiss="modal"><em
+                            class="icon ni ni-cross-sm"></em></a>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="nk-file-share-header">
+                        <div class="nk-file-share-group">
+                            <div class="nk-file-share-input-group">
+                                <div class="nk-file-share-input nk-file-share-input-to">
+                                    <label class="label">To</label><input type="text" class="input-mail tagify"
+                                        placeholder="New Name"
+                                        data-whitelist="team@softnio.com, help@softnio.com, contact@softnio.com" id="rename-item-name" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer bg-light">
+                    <ul class="btn-toolbar g-3">
+                        <li>
+                            <a href="#" data-bs-dismiss="modal"
+                                class="btn btn-outline-light btn-white">Cancel</a>
+                        </li>
+                        <li><a href="#" class="btn btn-primary" onclick="confirmRename()">Rename</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="new-template">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header align-center">
+                    <div class="nk-file-title">
+                        <div class="nk-file-icon">
+                            <span class="nk-file-icon-type"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                                    viewBox="0 0 72 72">
+                                    <!-- Main file body -->
+                                    <path fill="#6C87FE"
+                                        d="M18,12h36c1.1,0,2,0.9,2,2v44c0,1.1-0.9,2-2,2H18c-1.1,0-2-0.9-2-2V14C16,12.9,16.9,12,18,12z">
+                                    </path>
+                                    <!-- Folded corner -->
+                                    <path fill="#8AA3FF" d="M46,12h8v12c0,1.1-0.9,2-2,2H46V12z"></path>
+                                    <!-- Subtle shadow effect -->
+                                    <path fill="#798BFF" d="M18,58h36c1.1,0,2-0.9,2-2H16C16,57.1,16.9,58,18,58z"></path>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="nk-file-name">
+                            <div class="nk-file-name-text">
+                                <span class="title">New Template</span>
+                            </div>
+                            <div class="nk-file-name-sub">0 B</div>
+                        </div>
+                    </div>
+                    <a href="#" class="close" data-bs-dismiss="modal"><em
+                            class="icon ni ni-cross-sm"></em></a>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="nk-file-share-header">
+                        <div class="nk-file-share-group">
+                            <div class="nk-file-share-input-group">
+                                <div class="nk-file-share-input nk-file-share-input-to">
+                                    <label class="label">Name</label><input type="text" class="input-mail tagify"
+                                        placeholder="Enter Name" id="newTempName" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer bg-light">
+                    <ul class="btn-toolbar g-3">
+                        <li>
+                            <a href="#" data-bs-dismiss="modal"
+                                class="btn btn-outline-light btn-white">Cancel</a>
+                        </li>
+                        <li><a onclick="createTemplate()" href="#" class="btn btn-primary">Create</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="new-folder">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header align-center">
+                    <div class="nk-file-title">
+                        <div class="nk-file-icon">
+                            <span class="nk-file-icon-type"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                                    viewBox="0 0 72 72">
+                                    <path fill="#6C87FE"
+                                        d="M57.5,31h-23c-1.4,0-2.5-1.1-2.5-2.5v-10c0-1.4,1.1-2.5,2.5-2.5h23c1.4,0,2.5,1.1,2.5,2.5v10	C60,29.9,58.9,31,57.5,31z" />
+                                    <path fill="#8AA3FF"
+                                        d="M59.8,61H12.2C8.8,61,6,58,6,54.4V17.6C6,14,8.8,11,12.2,11h18.5c1.7,0,3.3,1,4.1,2.6L38,24h21.8	c3.4,0,6.2,2.4,6.2,6v24.4C66,58,63.2,61,59.8,61z" />
+                                    <path display="none" fill="#8AA3FF"
+                                        d="M62.1,61H9.9C7.8,61,6,59.2,6,57c0,0,0-31.5,0-42c0-2.2,1.8-4,3.9-4h19.3	c1.6,0,3.2,0.2,3.9,2.3l2.7,6.8c0.5,1.1,1.6,1.9,2.8,1.9h23.5c2.2,0,3.9,1.8,3.9,4v31C66,59.2,64.2,61,62.1,61z" />
+                                    <path fill="#798BFF" d="M7.7,59c2.2,2.4,4.7,2,6.3,2h45c1.1,0,3.2,0.1,5.3-2H7.7z" />
+                                </svg></span>
+                        </div>
+                        <div class="nk-file-name">
+                            <div class="nk-file-name-text">
+                                <span class="title">New Folder</span>
+                            </div>
+                            <div class="nk-file-name-sub">0 MB</div>
+                        </div>
+                    </div>
+                    <a href="#" class="close" data-bs-dismiss="modal"><em
+                            class="icon ni ni-cross-sm"></em></a>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="nk-file-share-header">
+                        <div class="nk-file-share-group">
+                            <div class="nk-file-share-input-group">
+                                <div class="nk-file-share-input nk-file-share-input-to">
+                                    <label class="label">Name</label><input type="text" class="input-mail tagify"
+                                        id="newFolderName" placeholder="Enter Name" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer bg-light">
+                    <ul class="btn-toolbar g-3">
+                        <li>
+                            <a href="#" data-bs-dismiss="modal"
+                                class="btn btn-outline-light btn-white">Cancel</a>
+                        </li>
+                        <li><a href="#" onclick="createFolder()" class="btn btn-primary">Create</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="file-details">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header align-center">
+                    <div class="nk-file-title">
+                        <div class="nk-file-icon">
+                            <span class="nk-file-icon-type"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                                    viewBox="0 0 72 72">
+                                    <path fill="#6C87FE"
+                                        d="M57.5,31h-23c-1.4,0-2.5-1.1-2.5-2.5v-10c0-1.4,1.1-2.5,2.5-2.5h23c1.4,0,2.5,1.1,2.5,2.5v10	C60,29.9,58.9,31,57.5,31z" />
+                                    <path fill="#8AA3FF"
+                                        d="M59.8,61H12.2C8.8,61,6,58,6,54.4V17.6C6,14,8.8,11,12.2,11h18.5c1.7,0,3.3,1,4.1,2.6L38,24h21.8	c3.4,0,6.2,2.4,6.2,6v24.4C66,58,63.2,61,59.8,61z" />
+                                    <path display="none" fill="#8AA3FF"
+                                        d="M62.1,61H9.9C7.8,61,6,59.2,6,57c0,0,0-31.5,0-42c0-2.2,1.8-4,3.9-4h19.3	c1.6,0,3.2,0.2,3.9,2.3l2.7,6.8c0.5,1.1,1.6,1.9,2.8,1.9h23.5c2.2,0,3.9,1.8,3.9,4v31C66,59.2,64.2,61,62.1,61z" />
+                                    <path fill="#798BFF" d="M7.7,59c2.2,2.4,4.7,2,6.3,2h45c1.1,0,3.2,0.1,5.3-2H7.7z" />
+                                </svg></span>
+                        </div>
+                        <div class="nk-file-name">
+                            <div class="nk-file-name-text">
+                                <span class="title">UI/UX Design</span>
+                            </div>
+                            <div class="nk-file-name-sub">Project</div>
+                        </div>
+                    </div>
+                    <a href="#" class="close" data-bs-dismiss="modal"><em
+                            class="icon ni ni-cross-sm"></em></a>
+                </div>
+                <div class="modal-body">
+                    <div class="nk-file-details">
+                        <div class="nk-file-details-row">
+                            <div class="nk-file-details-col">Type</div>
+                            <div class="nk-file-details-col">Folder</div>
+                        </div>
+                        <div class="nk-file-details-row">
+                            <div class="nk-file-details-col">Size</div>
+                            <div class="nk-file-details-col">35.48 MB</div>
+                        </div>
+
+                        <div class="nk-file-details-row">
+                            <div class="nk-file-details-col">Owner</div>
+                            <div class="nk-file-details-col">Me</div>
+                        </div>
+
+                        <div class="nk-file-details-row">
+                            <div class="nk-file-details-col">Modified</div>
+                            <div class="nk-file-details-col">
+                                Feb 19, 2020 by User
+                            </div>
+                        </div>
+                        <div class="nk-file-details-row">
+                            <div class="nk-file-details-col">Opened</div>
+                            <div class="nk-file-details-col">Apr 23, 2020 by Me</div>
+                        </div>
+                        <div class="nk-file-details-row">
+                            <div class="nk-file-details-col">Created</div>
+                            <div class="nk-file-details-col">Feb 19, 2020</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer modal-footer-stretch bg-light">
+                    <div class="modal-footer-between">
+
+                        <div class="g">
+                            <ul class="btn-toolbar g-3">
+
+                                <li>
+                                    <a href="#" class="btn btn-primary file-dl-toast">Download</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="loader-wrapper"><div class="loader"></div></div> 
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/bundle.js@ver=3.2.4' %}"></script>
+    <script src="{% static 'js/scripts.js@ver=3.2.4' %}"></script>
+    <script src="{% static 'js/demo-settings.js@ver=3.2.4' %}"></script>
+    <script src="{% static 'js/apps/file-manager.js@ver=3.2.4' %}"></script>
+</body>
+
+</html>
